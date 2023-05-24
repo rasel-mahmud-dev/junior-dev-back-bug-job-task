@@ -49,7 +49,7 @@ class BaseClass {
 
       return res;
     } catch (e) {
-      throw new Error(e.message);
+      throw Error(e);
     }
   }
 
@@ -61,7 +61,7 @@ class BaseClass {
       let headers = {accept: 'application/json', authorization: this.token, 'X-App-Key': this.appKey};
       return await fetch({method: 'POST', url, headers, data: {paymentID}});
     } catch (error) {
-      throw error;
+      throw Error(error);
     }
   }
 

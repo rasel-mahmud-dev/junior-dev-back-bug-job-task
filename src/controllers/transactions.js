@@ -1,5 +1,4 @@
 import {Transaction} from '../models/Transaction';
-import mongoose from 'mongoose';
 
 
 export async function getAllTransactions(req, res) {
@@ -22,7 +21,7 @@ export async function getAllOrderDetail(req, res) {
       {
         $match: {
           transactionId: transactionId,
-          customerId: mongoose.Types.ObjectId(req.user.user_id)
+          // customerId: mongoose.Types.ObjectId(req.user.user_id)
         }
       },
       {
@@ -45,15 +44,15 @@ export async function getAllOrderDetail(req, res) {
       {$unwind: {path: '$customer', preserveNullAndEmptyArrays: true}},
       {
         $set: {
-          email: '$customer.email',
-          phone: '$order.phone',
-          orderId: '$order._id',
-          address: '$order.email',
-          invoiceNumber: '$order.invoiceNumber'
+          'email': '$customer.email',
+          'phone': '$order.phone',
+          'orderId': '$order._id',
+          'address': '$order.address',
+          'invoiceNumber': '$order.invoiceNumber'
         }
       },
       {
-        $group: {
+        $project: {
           email: 1,
           phone: 1,
           address: 1,
@@ -63,8 +62,11 @@ export async function getAllOrderDetail(req, res) {
       }
     ]);
 
-    res.status(200).json({status: 'ok', data: transaction});
-
+    if (transaction && transaction[0]) {
+      res.status(200).json({status: 'ok', data: transaction[0]});
+    } else {
+      res.status(200).json({status: 'ok', data: null});
+    }
 
   } catch (ex) {
     res.status(500).json({message: 'transactions fetch fail'});

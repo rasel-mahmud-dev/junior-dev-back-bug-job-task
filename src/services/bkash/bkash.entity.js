@@ -101,6 +101,9 @@ export const executePayment = ({bkash, mail, config}) => async (req, res) => {
 
       await newTransaction.save();
 
+      // update order payment status
+      await Order.findByIdAndUpdate({_id: order._id}, {$set: {isPaid: true}});
+
 
       // send confirmation mail
       // await mail({
