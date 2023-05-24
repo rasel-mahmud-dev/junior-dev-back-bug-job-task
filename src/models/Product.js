@@ -4,7 +4,7 @@ const schema = {
   title: String,
   price: Number,
   description: String,
-  image: String,
+  thumb: String,
   discount: Number,
   stock: Number,
   sellerId: {

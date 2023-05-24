@@ -2,6 +2,16 @@ import {Product} from '../models/Product';
 
 import * as yup from 'yup';
 
+export async function getProductDetail(req, res) {
+  const {productId} = req.params;
+  try {
+    let product = await Product.findOne({_id: productId}).populate('sellerId', 'firstName avatar');
+    res.status(200).json(product);
+  } catch (ex) {
+    res.status(500).json({message: 'Product fetch fail'});
+  }
+}
+
 export async function getAllProducts(req, res) {
   try {
     let products = await Product.find({});
@@ -34,7 +44,7 @@ export async function addProduct(req, res) {
       description,
       discount,
       thumb,
-      sellerId: req.body.user_id,
+      sellerId: req.user.user_id,
     });
 
     newProduct = await newProduct.save();
