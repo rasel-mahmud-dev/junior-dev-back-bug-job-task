@@ -75,3 +75,25 @@ export async function addToCart(req, res) {
     return res.status(500).json({message: 'Internal Error'});
   }
 }
+
+
+export async function removeFromCart(req, res) {
+  try {
+
+    const {
+      productId,
+    } = req.params;
+
+    let result = await Cart.deleteOne({productId});
+
+    if (!result) {
+      return res.status(500).json({message: 'Cart item delete fail'});
+    }
+
+    res.status(201).json({message: 'Item delete successful'});
+
+  } catch (ex) {
+
+    return res.status(500).json({message: 'Cart item delete fail'});
+  }
+}

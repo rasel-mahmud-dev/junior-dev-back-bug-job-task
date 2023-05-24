@@ -42,7 +42,7 @@ export async function register(req, res) {
 
   try {
 
-    const {firstName, lastName = '', email, password} = req.body;
+    const {firstName, lastName = '',  avatar='', email, password} = req.body;
 
 
     let user = await User.findOne({email});
@@ -62,7 +62,7 @@ export async function register(req, res) {
     await schema.validate(req.body);
 
 
-    let payload = {firstName, lastName, email, password: makeHash(password)};
+    let payload = {firstName, lastName, email, avatar, password: makeHash(password)};
 
 
     let newUser = new User({...payload});

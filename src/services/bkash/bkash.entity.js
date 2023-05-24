@@ -44,7 +44,7 @@ export const createPayment = ({bkash}) => async (req, res) => {
 
 export const executePayment = ({bkash, mail, config}) => async (req, res) => {
 
-  const { email, totalPrice, paymentID } = req.query;
+  const { email, totalPrice, paymentID, clientRedirect } = req.query;
 
 
   const execute = await bkash.executeAgreement(paymentID);
@@ -72,7 +72,7 @@ export const executePayment = ({bkash, mail, config}) => async (req, res) => {
   }
 
   // redirect client due to payment process fail
-  res.redirect(config.base + `?errorMessage=${execute.statusMessage}`);
+  res.redirect(config.base + `${clientRedirect}?errorMessage=${execute.statusMessage}`);
 };
 
 

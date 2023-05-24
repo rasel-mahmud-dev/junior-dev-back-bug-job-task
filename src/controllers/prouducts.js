@@ -21,6 +21,23 @@ export async function getAllProducts(req, res) {
   }
 }
 
+export async function searchProducts(req, res) {
+
+  const {text = ''} = req.query;
+
+  try {
+    let products = await Product.find({
+      $or: [
+        {title: {$regex: new RegExp(text, 'ig')}},
+        // {description: {$regex: new RegExp(text, 'i')}},
+      ]
+    });
+    res.status(200).json(products);
+  } catch (ex) {
+    res.status(500).json({message: 'Product fetch fail'});
+  }
+}
+
 export async function addProduct(req, res) {
   try {
 
