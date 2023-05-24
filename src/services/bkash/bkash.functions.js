@@ -3,6 +3,7 @@
  * Please refer to the documentation at https://developer.bka.sh for information on bKash.
  */
 import fetch from '../../utils/fetch';
+import settings from '../../../settings.json';
 
 class BaseClass {
   sandbox = 'https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout';
@@ -52,26 +53,7 @@ class BaseClass {
     }
   }
 
-  async createAgreement({mode = '0000', payerReference = '', email = '', intent, totalPrice = 0}) {
-    try {
-      let url = this.baseUrl + '/create';
-      let data = {
-        mode,
-        amount: totalPrice,
-        intent,
-        currency: 'BDT',
-        payerReference,
-        callbackURL: 'http://localhost:9000/api/bkash/execute/?email=' + email + '&totalPrice=' + totalPrice,
-      };
 
-
-      let headers = {Authorization: this.token, 'X-App-Key': this.appKey};
-
-      return await fetch({method: 'POST', url, headers, data});
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
 
   async executeAgreement(paymentID = '') {
     try {
@@ -79,49 +61,37 @@ class BaseClass {
       let headers = {accept: 'application/json', authorization: this.token, 'X-App-Key': this.appKey};
       return await fetch({method: 'POST', url, headers, data: {paymentID}});
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 
 
-  async agreementStatus() {
-    try {
-      let url = this.baseUrl + '/agreement/status';
-      let data = {agreementID: this.agreementID};
-      let headers = {Authorization: this.token, 'X-App-Key': this.appKey};
-      return await fetch({method: 'POST', url, headers, data});
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
 
-  async createPayment({
-      mode,
-      merchantAssociationInfo,
-      amount,
-      merchantInvoiceNumber,
-      agreementID,
-      baseURL,
-    }) {
+  async createPayment({amount, email, clientRedirect, merchantInvoiceNumber, payerReference, currency='BDT', intent = 'sale'}) {
+    
+    let url = this.baseUrl + '/create';
+    
     try {
-      let url = this.baseUrl + '/create';
+      let callbackURL = `${settings.api}/api/bkash/execute/?email=${email}&totalPrice=${amount}&currency=${currency}&clientRedirect=${clientRedirect}`;
+
       let data = {
-        agreementID: agreementID,
-        mode: mode,
-        payerReference: this.payerReference,
-        callbackURL: baseURL,
-        merchantAssociationInfo: merchantAssociationInfo,
-        amount: amount,
-        currency: 'BDT',
-        intent: 'sale',
-        merchantInvoiceNumber: merchantInvoiceNumber,
+        mode: '0011',
+        payerReference: payerReference,
+        callbackURL: callbackURL,
+        merchantInvoiceNumber,
+        amount: String(amount),
+        currency,
+        intent: intent,
       };
+
       let headers = {Authorization: this.token, 'X-App-Key': this.appKey};
-      return await fetch({method: 'POST', url, headers, data});
-    } catch (error) {
-      throw new Error(error.message);
+
+      return fetch({method: 'POST', url, headers, data});
+    } catch (e) {
+      throw e;
     }
   }
+
 
   async executePayment({paymentID}) {
     try {
