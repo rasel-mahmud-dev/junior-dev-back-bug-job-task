@@ -46,6 +46,26 @@
 - quantity: Number
 - customerId: ref: User
 
+#### Order 
+- items []Product
+- totalPrice number
+- invoiceNumber string
+- paymentID string
+- isPaid boolean
+- address string
+- phone string
+- customerId ref: User
+
+
+#### Payment
+- orderId ref: OrderId
+- paymentID string
+- transactionId string
+- payerReference
+- amount number
+- currency string
+- customerId ref: User
+
 
 ## Route
 
